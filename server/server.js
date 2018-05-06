@@ -7,6 +7,11 @@
 const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
+
+
+const {generateMessage} = require('./utils/message');
+
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
@@ -22,29 +27,17 @@ io.on('connection', (socket) => {
     console.log('New User connected!');
 
     // socket.emit from Admin text welcome to the chat app
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome'));
 
     // socket.broadcast.emit from Admin text New user joined
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined',
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     // not a listener not going provide callback function
 
     socket.on('createMessage', (newMessage) => {
         console.log('createMessage', newMessage);
         // emit to every connection
-        io.emit('newMessage', {
-            from: newMessage.from,
-            text: newMessage.text,
-            createdAt: new Date().getTime()
-        })
+        io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
 
         // we not gonna see msg we sent but everyone else will
         // socket.broadcast.emit('newMessage', {
