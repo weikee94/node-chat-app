@@ -21,6 +21,20 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New User connected!');
 
+    // socket.emit from Admin text welcome to the chat app
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+
+    // socket.broadcast.emit from Admin text New user joined
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
+
     // not a listener not going provide callback function
 
     socket.on('createMessage', (newMessage) => {
@@ -31,6 +45,13 @@ io.on('connection', (socket) => {
             text: newMessage.text,
             createdAt: new Date().getTime()
         })
+
+        // we not gonna see msg we sent but everyone else will
+        // socket.broadcast.emit('newMessage', {
+        //     from: newMessage.from,
+        //     text: newMessage.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
 
     socket.on('disconnect', () => {
@@ -46,3 +67,5 @@ server.listen(port, () => {
 module.exports = {
     app: app
 }
+
+// broadcasting is the term for a meeting and event to everybody but one specific user
