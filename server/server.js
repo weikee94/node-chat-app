@@ -22,24 +22,15 @@ io.on('connection', (socket) => {
     console.log('New User connected!');
 
     // not a listener not going provide callback function
-    socket.emit('newEmail', {
-        from: 'Wei@exmaple.com',
-        text: 'How ur going',
-        createdAt: 123
-    });
-
-    socket.on('createEmail', (newEmail) => {
-        console.log('createEmail', newEmail);
-    });
 
     socket.on('createMessage', (newMessage) => {
         console.log('createMessage', newMessage);
-    });
-
-    socket.emit('newMessage', {
-        from: 'Kee@example.com',
-        text: 'msg from kee',
-        createdAt: 345
+        // emit to every connection
+        io.emit('newMessage', {
+            from: newMessage.from,
+            text: newMessage.text,
+            createdAt: new Date().getTime()
+        })
     });
 
     socket.on('disconnect', () => {
